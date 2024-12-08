@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sand Clock</title>
+
+    <style>
+        /* CSS Styles */
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: "Poppins", sans-serif;
+        }
+        .container {
+          display: flex;
+          row-gap: 10px;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          height: 100vh;
+          width: 100%;
+          overflow: hidden;
+        }
+        .container .image {
+          position: absolute;
+          height: 100%;
+          width: 100%;
+          object-fit: cover;
+          z-index: -1;
+        }
+        body::after {
+          position: absolute;
+          content: "";
+          top: 0;
+          height: 100%;
+          width: 100%;
+          background: #000;
+          z-index: -1;
+          opacity: 0.2;
+        }
+        .container header {
+          font-size: 60px;
+          color: #fff;
+          font-weight: 600;
+          text-align: center;
+        }
+        .container p {
+          font-size: 16px;
+          font-weight: 400;
+          color: #fff;
+          max-width: 550px;
+          text-align: center;
+        }
+        .container .time-content {
+          display: flex;
+          column-gap: 30px;
+          align-items: center;
+          margin: 2rem;
+          border: 1px solid white;
+          padding: 2rem 2.5rem;
+          border-radius: 0.5rem;
+          background: rgba(250, 250, 250, 0.2);
+        }
+        .time-content .time {
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+        }
+        .time .number {
+          font-weight: 800;
+          font-size: 80px;
+          line-height: 1;
+          color: #eee;
+        }
+        .time .text {
+          text-transform: capitalize;
+          color: #fff;
+          font-weight: 600;
+          font-size: 12px;
+        }
+        @media screen and (max-width: 480px) {
+          .container header {
+            font-size: 50px;
+          }
+        }
+    </style>
+</head>
+
+<body>
+    <section class="container">
+        <img src="https://images.unsplash.com/photo-1625558298116-38f0173a522c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" alt="" class="image" />
+        <header>Time is Running Out!</header>
+        <p>
+          Countdown to the end of the life! Please be prepared for a long and good afterlife ahead.
+        </p>
+        <div class="time-content">
+          <div class="time days">
+            <span class="number">0</span>
+            <span class="text">days</span>
+          </div>
+          <div class="time hours">
+            <span class="number">0</span>
+            <span class="text">hours</span>
+          </div>
+          <div class="time minutes">
+            <span class="number">0</span>
+            <span class="text">minutes</span>
+          </div>
+          <div class="time seconds">
+            <span class="number">0</span>
+            <span class="text">seconds</span>
+          </div>
+        </div>
+      </section>
+
+    <script>
+        // Target date: March 20, 2055
+        const targetDate = new Date("2055-03-20T00:00:00");
+
+        // Elements for displaying the countdown
+        const seconds = document.querySelector(".seconds .number");
+        const minutes = document.querySelector(".minutes .number");
+        const hours = document.querySelector(".hours .number");
+        const days = document.querySelector(".days .number");
+
+        function updateCountdown() {
+            const currentDate = new Date();
+            const timeDifference = targetDate - currentDate;
+
+            if (timeDifference > 0) {
+                const remainingDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                const remainingHours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+                const remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+                days.textContent = remainingDays;
+                hours.textContent = remainingHours < 10 ? `0${remainingHours}` : remainingHours;
+                minutes.textContent = remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
+                seconds.textContent = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+            } else {
+                clearInterval(intervalId);
+                document.querySelector(".time-content").textContent = "Countdown Complete!";
+            }
+        }
+
+        // Update countdown every second
+        const intervalId = setInterval(updateCountdown, 1000);
+        updateCountdown(); // Initial call to display immediately
+    </script>
+</body>
+</html>
