@@ -3,119 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sand Clock</title>
-
+    <title>Sand Clock Countdown</title>
     <style>
-        /* CSS Styles */
         @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
         * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
         }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
         .container {
-          display: flex;
-          row-gap: 10px;
-          align-items: center;
-          justify-content: center;
-          flex-direction: column;
-          height: 100vh;
-          width: 100%;
-          overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+            position: relative;
+            text-align: center;
         }
-        .container .image {
-          position: absolute;
-          height: 100%;
-          width: 100%;
-          object-fit: cover;
-          z-index: -1;
+
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1501139083538-0139583c060f?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover no-repeat;
+            opacity: 0.3;
+            z-index: -1;
         }
-        body::after {
-          position: absolute;
-          content: "";
-          top: 0;
-          height: 100%;
-          width: 100%;
-          background: #000;
-          z-index: -1;
-          opacity: 0.2;
+
+        header {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #f5f7fa, #c3cfe2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .container header {
-          font-size: 60px;
-          color: #fff;
-          font-weight: 600;
-          text-align: center;
+
+        .subtitle {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            max-width: 700px;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
         }
-        .container p {
-          font-size: 16px;
-          font-weight: 400;
-          color: #fff;
-          max-width: 550px;
-          text-align: center;
+
+        .time-content {
+            display: flex;
+            gap: clamp(1rem, 3vw, 2rem);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .container .time-content {
-          display: flex;
-          column-gap: 30px;
-          align-items: center;
-          margin: 2rem;
-          border: 1px solid white;
-          padding: 2rem 2.5rem;
-          border-radius: 0.5rem;
-          background: rgba(250, 250, 250, 0.2);
+
+        .time {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100px;
         }
-        .time-content .time {
-          display: flex;
-          align-items: center;
-          flex-direction: column;
+
+        .number {
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 700;
+            background: linear-gradient(to bottom, #ffffff, #e0e0e0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .time .number {
-          font-weight: 800;
-          font-size: 80px;
-          line-height: 1;
-          color: #eee;
+
+        .text {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
         }
-        .time .text {
-          text-transform: capitalize;
-          color: #fff;
-          font-weight: 600;
-          font-size: 12px;
+
+        .sand-clock-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 2rem;
+            opacity: 0.8;
         }
-        @media screen and (max-width: 480px) {
-          .container header {
-            font-size: 50px;
-          }
+
+        @media (max-width: 768px) {
+            .time-content {
+                flex-direction: column;
+                padding: 2rem 1.5rem;
+            }
+            
+            .time {
+                flex-direction: row;
+                gap: 1rem;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+            }
+            
+            .number {
+                margin-bottom: 0;
+            }
+        }
+
+        /* Animation */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .time-content {
+            animation: pulse 3s infinite ease-in-out;
         }
     </style>
 </head>
 
 <body>
     <section class="container">
-        <img src="https://images.unsplash.com/photo-1625558298116-38f0173a522c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" alt="" class="image" />
-        <header>Time is Running Out!</header>
-        <p>
-          Countdown to the end of the life! Please be prepared for a long and good afterlife ahead.
+        <svg class="sand-clock-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 22h14"/>
+            <path d="M5 2h14"/>
+            <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
+            <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
+        </svg>
+        
+        <header>Time is Running Out</header>
+        <p class="subtitle">
+            Countdown to the end of life. Cherish every moment and prepare for the journey ahead.
         </p>
         <div class="time-content">
           <div class="time days">
             <span class="number">0</span>
-            <span class="text">days</span>
+            <span class="text">Days</span>
           </div>
           <div class="time hours">
             <span class="number">0</span>
-            <span class="text">hours</span>
+            <span class="text">Hours</span>
           </div>
           <div class="time minutes">
             <span class="number">0</span>
-            <span class="text">minutes</span>
+            <span class="text">Minutes</span>
           </div>
           <div class="time seconds">
             <span class="number">0</span>
-            <span class="text">seconds</span>
+            <span class="text">Seconds</span>
           </div>
         </div>
-      </section>
+    </section>
 
     <script>
         // Target date: March 20, 2055
@@ -127,6 +182,10 @@
         const hours = document.querySelector(".hours .number");
         const days = document.querySelector(".days .number");
 
+        function formatNumber(num) {
+            return num < 10 ? `0${num}` : num;
+        }
+
         function updateCountdown() {
             const currentDate = new Date();
             const timeDifference = targetDate - currentDate;
@@ -137,13 +196,17 @@
                 const remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
                 const remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
 
-                days.textContent = remainingDays;
-                hours.textContent = remainingHours < 10 ? `0${remainingHours}` : remainingHours;
-                minutes.textContent = remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
-                seconds.textContent = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+                days.textContent = formatNumber(remainingDays);
+                hours.textContent = formatNumber(remainingHours);
+                minutes.textContent = formatNumber(remainingMinutes);
+                seconds.textContent = formatNumber(remainingSeconds);
             } else {
                 clearInterval(intervalId);
-                document.querySelector(".time-content").textContent = "Countdown Complete!";
+                document.querySelector(".time-content").innerHTML = `
+                    <div style="font-size: 1.5rem; font-weight: 600;">
+                        The journey begins now
+                    </div>
+                `;
             }
         }
 
