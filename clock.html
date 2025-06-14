@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sand Clock Countdown</title>
+    <title>Life Countdown Clock</title>
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
@@ -107,6 +107,58 @@
             opacity: 0.8;
         }
 
+        /* Timeline Panel */
+        .time-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            padding: 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            text-align: left;
+            max-width: 280px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .time-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+        }
+
+        .timeline-item.highlight {
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .label {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+        }
+
+        .value {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .highlight .value {
+            color: #f5f7fa;
+            font-weight: 600;
+        }
+
         @media (max-width: 768px) {
             .time-content {
                 flex-direction: column;
@@ -124,23 +176,52 @@
             .number {
                 margin-bottom: 0;
             }
+
+            .time-info {
+                position: static;
+                max-width: 100%;
+                margin-top: 2rem;
+                margin-bottom: 1.5rem;
+            }
         }
 
         /* Animation */
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.02); }
             100% { transform: scale(1); }
         }
 
         .time-content {
-            animation: pulse 3s infinite ease-in-out;
+            animation: pulse 4s infinite ease-in-out;
         }
     </style>
 </head>
 
 <body>
     <section class="container">
+        <!-- Timeline Panel -->
+        <div class="time-info ">
+            <h3>⏳ Your Life Timeline</h3>
+            <div class="timeline-item highlight">
+                <span class="label">Born on:</span>
+                <span class="value">March 20, 1992</span>
+            </div>
+            <div class="timeline-item">
+                <span class="label">Age:</span>
+                <span class="value" id="age-display">33 years, 0 months, 0 days</span>
+            </div>
+            <div class="timeline-item">
+                <span class="label">Remaining:</span>
+                <span class="value" id="time-left-display">29 years, 0 months, 0 days</span>
+            </div>
+            <div class="timeline-item">
+                <span class="label">Lifespan:</span>
+                <span class="value">63 years (1992–2055)</span>
+            </div>
+        </div>
+
+        <!-- Main Countdown -->
         <svg class="sand-clock-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M5 22h14"/>
             <path d="M5 2h14"/>
@@ -150,69 +231,94 @@
         
         <header>Time is Running Out</header>
         <p class="subtitle">
-            Countdown to the end of life. Cherish every moment and prepare for the journey ahead.
+
+            Countdown to the end of the life! Please be prepared for a long and good afterlife ahead.
         </p>
         <div class="time-content">
           <div class="time days">
-            <span class="number">0</span>
+            <span class="number" id="days-remaining">0</span>
             <span class="text">Days</span>
           </div>
           <div class="time hours">
-            <span class="number">0</span>
+            <span class="number" id="hours-remaining">0</span>
             <span class="text">Hours</span>
           </div>
           <div class="time minutes">
-            <span class="number">0</span>
+            <span class="number" id="minutes-remaining">0</span>
             <span class="text">Minutes</span>
           </div>
           <div class="time seconds">
-            <span class="number">0</span>
+            <span class="number" id="seconds-remaining">0</span>
             <span class="text">Seconds</span>
           </div>
         </div>
     </section>
 
     <script>
-        // Target date: March 20, 2055
+        // Important dates
+        const birthDate = new Date("1992-03-20T00:00:00");
         const targetDate = new Date("2055-03-20T00:00:00");
+        const totalYears = 63; // 2055 - 1992
 
-        // Elements for displaying the countdown
-        const seconds = document.querySelector(".seconds .number");
-        const minutes = document.querySelector(".minutes .number");
-        const hours = document.querySelector(".hours .number");
-        const days = document.querySelector(".days .number");
+        // DOM elements
+        const ageDisplay = document.getElementById("age-display");
+        const timeLeftDisplay = document.getElementById("time-left-display");
+        const daysEl = document.getElementById("days-remaining");
+        const hoursEl = document.getElementById("hours-remaining");
+        const minutesEl = document.getElementById("minutes-remaining");
+        const secondsEl = document.getElementById("seconds-remaining");
 
+        // Format time as Y years, M months, D days
+        function formatTimePeriod(startDate, endDate) {
+            const totalDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24));
+            
+            const years = Math.floor(totalDays / 365.25);
+            const remainingDaysAfterYears = totalDays - years * 365.25;
+            
+            const months = Math.floor(remainingDaysAfterYears / 30.44); // Average days per month
+            const days = Math.floor(remainingDaysAfterYears % 30.44);
+            
+            return `${years} yrs ${months} m ${days} days`;
+        }
+
+        // Format 2-digit numbers
         function formatNumber(num) {
             return num < 10 ? `0${num}` : num;
         }
 
-        function updateCountdown() {
-            const currentDate = new Date();
-            const timeDifference = targetDate - currentDate;
-
-            if (timeDifference > 0) {
-                const remainingDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-                const remainingHours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-                const remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-
-                days.textContent = formatNumber(remainingDays);
-                hours.textContent = formatNumber(remainingHours);
-                minutes.textContent = formatNumber(remainingMinutes);
-                seconds.textContent = formatNumber(remainingSeconds);
+        // Update all displays
+        function updateAllDisplays() {
+            const now = new Date();
+            
+            // Update timeline
+            ageDisplay.textContent = formatTimePeriod(birthDate, now);
+            timeLeftDisplay.textContent = formatTimePeriod(now, targetDate);
+            
+            // Update countdown if time remains
+            const timeRemaining = targetDate - now;
+            
+            if (timeRemaining > 0) {
+                const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                
+                daysEl.textContent = formatNumber(days);
+                hoursEl.textContent = formatNumber(hours);
+                minutesEl.textContent = formatNumber(minutes);
+                secondsEl.textContent = formatNumber(seconds);
             } else {
-                clearInterval(intervalId);
                 document.querySelector(".time-content").innerHTML = `
                     <div style="font-size: 1.5rem; font-weight: 600;">
-                        The journey begins now
+                        The time has come
                     </div>
                 `;
             }
         }
 
-        // Update countdown every second
-        const intervalId = setInterval(updateCountdown, 1000);
-        updateCountdown(); // Initial call to display immediately
+        // Update every second
+        const intervalId = setInterval(updateAllDisplays, 1000);
+        updateAllDisplays(); // Initial call
     </script>
 </body>
 </html>
